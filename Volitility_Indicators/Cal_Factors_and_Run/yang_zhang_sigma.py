@@ -17,14 +17,13 @@ def yang_zhang_sigma(data, window, alpha):
     """
     data = data.copy()
 
-    data['c2c'] = data.groupby('symbol')['close'].apply(lambda x: x.pct_change()).values + 1
-    data['ln_c2c'] = np.log(data['c2c'])
-    data['c2c_sigma'] = data.groupby('symbol')['ln_c2c'].rolling(window).std(ddof=1).values
+    data['o'] = data['open']/data['pre_close']
+    data['ln_o'] = np.log(data['o'])
+    data['o_sigma'] = data.groupby('symbol')['ln_o'].rolling(window).std(ddof=1).values
 
-    # open to open volatility
-    data['o2o'] = data.groupby('symbol')['open'].apply(lambda x: x.pct_change()).values + 1
-    data['ln_o2o'] = np.log(data['o2o'])
-    data['o2o_sigma'] = data.groupby('symbol')['ln_o2o'].rolling(window).std(ddof=1).values
+    data['c'] = data['close']/data['open']
+    data['ln_c'] = np.log(data['c'])
+    data['c_sigma'] = data.groupby('symbol')['ln_c'].rolling(window).std(ddof=1).values
 
     data['h_c'] = np.log(data['high'] / data['close'])
     data['h_o'] = np.log(data['high'] / data['open'])
@@ -40,4 +39,4 @@ def yang_zhang_sigma(data, window, alpha):
     data['yang_zhang_sigma'] = np.sqrt(
         pow(data['o2o_sigma'], 2) + k * pow(data['c2c_sigma'], 2) + (1 - k) * pow(data['rsy_sigma'], 2))
 
-    return data[['symbol', 'Date', 'yang_zhang_sigma']]
+    return data[['symbol', 'date', 'yang_zhang_sigma']]
