@@ -19,3 +19,8 @@ def find_p(numbers):
     p_value = max(val for val in values if val < numbers)
 
     return p_value
+
+for factor in factor_list:
+    factor_ranks = data[factor].rolling(242).apply(
+                        lambda x: pd.Series(x).rank(pct=True, na_option='keep').iloc[-1] * 100)
+    data[factor + '_P'] = factor_ranks.apply(lambda x: find_p(x) if not pd.isna(x) else None)
